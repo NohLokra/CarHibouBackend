@@ -10,5 +10,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	@SuppressWarnings("unchecked")
 	User save(User entity);
 	User findById(int id);
-	
+	User findByToken(String token);
 }

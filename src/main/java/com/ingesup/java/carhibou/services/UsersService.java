@@ -35,5 +35,9 @@ public class UsersService {
 	public User create(User u) {
 		return daoUser.save(u);
 	}
+	
+	public User findByToken(String token) {
+		return daoUser.findByToken(token);
+	}
 }
 

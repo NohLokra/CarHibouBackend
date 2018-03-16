@@ -3,6 +3,8 @@ package com.ingesup.java.carhibou.data.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * The persistent class for the segments database table.
@@ -10,54 +12,60 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="segments")
-@NamedQuery(name="Segment.findAll", query="SELECT s FROM Segment s")
-public class Segment implements Serializable {
+@NamedQuery(name="Point.findAll", query="SELECT p FROM Point p")
+public class Point implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name="end_lat_lng")
-	private String endLatLng;
+	@Column(name="lat")
+	private double lat;
 
-	@Column(name="start_lat_lng")
-	private String startLatLng;
+	@Column(name="lng")
+	private double lng;
 
 	//bi-directional many-to-one association to Itinerary
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name="itinerary_id")
 	private Itinerary itinerary;
 
-	public Segment() {
+	public Point() {
+	}
+	
+	public Point(double lat, double lng) {
+		this.lat = lat;
+		this.lng = lng;
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getEndLatLng() {
-		return this.endLatLng;
+	public double getLat() {
+		return lat;
 	}
 
-	public void setEndLatLng(String endLatLng) {
-		this.endLatLng = endLatLng;
+	public void setLat(double lat) {
+		this.lat = lat;
 	}
 
-	public String getStartLatLng() {
-		return this.startLatLng;
+	public double getLng() {
+		return lng;
 	}
 
-	public void setStartLatLng(String startLatLng) {
-		this.startLatLng = startLatLng;
+	public void setLng(double lng) {
+		this.lng = lng;
 	}
 
 	public Itinerary getItinerary() {
-		return this.itinerary;
+		return itinerary;
 	}
 
 	public void setItinerary(Itinerary itinerary) {

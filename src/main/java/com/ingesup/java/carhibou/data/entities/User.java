@@ -2,6 +2,9 @@ package com.ingesup.java.carhibou.data.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -32,7 +35,8 @@ public class User implements Serializable {
 	private String token;
 
 	//bi-directional many-to-one association to Itinerary
-	@OneToMany(mappedBy="user")
+	@JsonIgnore
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
 	private List<Itinerary> itineraries;
 
 	public User() {

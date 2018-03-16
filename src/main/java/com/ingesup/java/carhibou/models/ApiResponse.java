@@ -21,6 +21,10 @@ public class ApiResponse {
 	public void setError(CustomError error) {
 		this.error = error;
 	}
+	
+	public void setError(String error) {
+		this.error = new CustomError(error);
+	}
 
 	public Object getResult() {
 		return result;

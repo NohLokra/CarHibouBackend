@@ -2,6 +2,9 @@ package com.ingesup.java.carhibou.data.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -19,8 +22,11 @@ public class Itinerary implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name="departure_label")
-	private String departureLabel;
+	@Column(name="start")
+	private String start;
+
+	@Column(name="arrival")
+	private String arrival;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne
@@ -28,10 +34,18 @@ public class Itinerary implements Serializable {
 	private User user;
 
 	//bi-directional many-to-one association to Segment
-	@OneToMany(mappedBy="itinerary")
-	private List<Segment> segments;
+	@JsonIgnore
+	@OneToMany(mappedBy="itinerary", fetch = FetchType.LAZY)
+	private List<Point> points;
 
 	public Itinerary() {
+	}
+	
+	public Itinerary(Itinerary i) {
+		this.points = i.getPoints();
+		this.setStart(i.getStartAsLatLng());
+		this.setArrival(i.getArrivalAsLatLng());
+		this.user = i.getUser();
 	}
 
 	public int getId() {
@@ -42,12 +56,36 @@ public class Itinerary implements Serializable {
 		this.id = id;
 	}
 
-	public String getDepartureLabel() {
-		return this.departureLabel;
+	public Point getStartAsLatLng() {
+		String[] latAndLng = this.start.split(";");
+		double lat = Double.parseDouble(latAndLng[0]);
+		double lng = Double.parseDouble(latAndLng[1]);
+		
+		return new Point(lat, lng);
+	}
+	
+	public String getStart() {
+		return this.start;
 	}
 
-	public void setDepartureLabel(String departureLabel) {
-		this.departureLabel = departureLabel;
+	public void setStart(Point start) {
+		this.start = start.getLat() + ";" + start.getLng();
+	}
+
+	public Point getArrivalAsLatLng() {
+		String[] latAndLng = this.arrival.split(";");
+		double lat = Double.parseDouble(latAndLng[0]);
+		double lng = Double.parseDouble(latAndLng[1]);
+		
+		return new Point(lat, lng);
+	}
+
+	public String getArrival() {
+		return this.arrival;
+	}
+
+	public void setArrival(Point arrival) {
+		this.arrival = arrival.getLat() + ";" + arrival.getLng();
 	}
 
 	public User getUser() {
@@ -58,26 +96,25 @@ public class Itinerary implements Serializable {
 		this.user = user;
 	}
 
-	public List<Segment> getSegments() {
-		return this.segments;
+	public List<Point> getPoints() {
+		return this.points;
 	}
 
-	public void setSegments(List<Segment> segments) {
-		this.segments = segments;
+	public void setSegments(List<Point> points) {
+		this.points = points;
 	}
 
-	public Segment addSegment(Segment segment) {
-		getSegments().add(segment);
-		segment.setItinerary(this);
+	public Point addPoint(Point point) {
+		getPoints().add(point);
+		point.setItinerary(this);
 
-		return segment;
+		return point;
 	}
 
-	public Segment removeSegment(Segment segment) {
-		getSegments().remove(segment);
+	public Point removePoint(Point segment) {
+		getPoints().remove(segment);
 		segment.setItinerary(null);
 
 		return segment;
 	}
-
 }

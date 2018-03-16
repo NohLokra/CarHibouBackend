@@ -1,21 +1,102 @@
 package com.ingesup.java.carhibou.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ingesup.java.carhibou.data.dto.ItineraryDTO;
 import com.ingesup.java.carhibou.data.entities.Itinerary;
-import com.ingesup.java.carhibou.models.PostItinerary;
+import com.ingesup.java.carhibou.data.entities.Point;
+import com.ingesup.java.carhibou.models.ApiResponse;
+import com.ingesup.java.carhibou.models.Circle;
+import com.ingesup.java.carhibou.services.ItinerariesService;
+import com.ingesup.java.carhibou.services.UsersService;
 
 @RestController
-@RequestMapping("/itineraries")
+@RequestMapping(value="/itineraries")
+@CrossOrigin(origins = "*")
 public class ItinerariesController {
+	@Autowired
+	ItinerariesService itinerariesService;
+	
+	@Autowired
+	UsersService usersService;
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public Itinerary insert(
-		@RequestParam("itinerary") PostItinerary i
+	@ResponseBody
+	public ApiResponse insert(
+		@RequestBody ItineraryDTO i,
+		@RequestHeader("Authorization") String token
 	) {
-		return null;
+		
+		System.out.println(token);
+		
+		ApiResponse response = new ApiResponse();
+		
+		Itinerary itinerary = new Itinerary();
+		itinerary.setUser(usersService.findByToken(token));
+		itinerary.setArrival(i.getArrival());
+		itinerary.setStart(i.getStart());
+		
+		itinerary = itinerariesService.save(itinerary);
+		
+		if ( itinerary == null ) {
+			response.setError("Unable to create itinerary");
+		} else {
+			response.setResult(itinerary);
+		}
+		
+		return response;
+	}
+	
+	@ResponseBody
+	@RequestMapping(method=RequestMethod.GET)
+	public ApiResponse getAround(
+		@RequestParam("lat") double latitude,
+		@RequestParam("lng") double longitude,
+		@RequestParam("radius") int radius,
+		@RequestHeader("Authorization") String token
+	) {
+		ApiResponse result = new ApiResponse();
+		
+		Circle circle = new Circle(latitude, longitude, radius);
+		
+		if ( token == null ) {
+			result.setError("Vous devez être connectés pour accéder à cette fonctionnalité");
+		} else {
+			List<Itinerary> allItineraries = itinerariesService.findAll();
+			List<Itinerary> resultItineraries = new ArrayList<Itinerary>();
+			
+			for ( Itinerary i : allItineraries ) {
+				for ( Point point : i.getPoints() ) {
+					if ( circle.hasPoint(point) ) {
+						resultItineraries.add(i);
+					}
+				}
+			}
+			
+			result.setResult(resultItineraries);
+		}
+		
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/test", method=RequestMethod.GET)
+	public ApiResponse test() {
+		ApiResponse response = new ApiResponse();
+		
+		response.setResult(itinerariesService.findAll());
+		
+		return response;
 	}
 }

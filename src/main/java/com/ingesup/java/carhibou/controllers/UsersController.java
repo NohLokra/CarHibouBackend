@@ -1,7 +1,10 @@
 package com.ingesup.java.carhibou.controllers;
 
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,10 +12,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ingesup.java.carhibou.models.ApiResponse;
-import com.ingesup.java.carhibou.models.CustomError;
 import com.ingesup.java.carhibou.models.UserSession;
 import com.ingesup.java.carhibou.data.entities.User;
 import com.ingesup.java.carhibou.services.UsersService;
+
+import java.util.regex.Matcher;
 
 @RestController
 @RequestMapping(value="/users")
@@ -22,7 +26,7 @@ public class UsersController {
 	@Autowired
 	UsersService usersService;
 	
-	@RequestMapping(value="/auth", method = RequestMethod.GET)
+	@RequestMapping(value="/auth", method = RequestMethod.POST)
 	@ResponseBody
 	public ApiResponse authenticate(
 			@RequestParam("username") String username, 
@@ -35,13 +39,13 @@ public class UsersController {
 			UserSession session = new UserSession(u);
 			response.setResult(session);
 		} else {
-			response.setError(new CustomError("Wrong username or password"));
+			response.setError("Wrong username or password");
 		}
 		
 		return response;
 	}
 	
-	@RequestMapping(value="/register", method=RequestMethod.GET)
+	@RequestMapping(value="/register", method=RequestMethod.POST)
 	public ApiResponse register(
 		@RequestParam("username") String username,
 		@RequestParam("password") String password,
@@ -51,17 +55,17 @@ public class UsersController {
 		ApiResponse response = new ApiResponse();
 		
 		if ( !password.equals(passwordConfirm) ) {
-			response.setError(new CustomError("Passwords don't match"));
+			response.setError("Passwords don't match");
 			
 			return response;
 		}
 		
-//		Pattern mailPattern = Pattern.compile("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2, 6}$/", Pattern.CASE_INSENSITIVE);
-//		Matcher m = mailPattern.matcher(email);
-//		
-//		if ( !m.find() ) {
-//			response.setError(new CustomError("Invalid Email"));
-//		}
+		Pattern mailPattern = Pattern.compile("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$/", Pattern.CASE_INSENSITIVE);
+		Matcher m = mailPattern.matcher(email);
+		
+		if ( !m.find() ) {
+			response.setError("Invalid Email");
+		}
 			
 		User u = new User();
 		u.setUsername(username);
@@ -74,5 +78,16 @@ public class UsersController {
 		response.setResult(session);
 		
 		return response;
+	}
+	
+	@RequestMapping(value="/auth", method=RequestMethod.DELETE)
+	public ApiResponse logout(
+		@RequestHeader("Authorization") String authorization
+	) {
+		ApiResponse result = new ApiResponse();
+		
+		System.out.println(authorization);
+		
+		return result;
 	}
 }
