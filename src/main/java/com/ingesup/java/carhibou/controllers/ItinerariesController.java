@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ingesup.java.carhibou.data.dto.ItineraryDTO;
+import com.ingesup.java.carhibou.data.entities.Commentary;
 import com.ingesup.java.carhibou.data.entities.Itinerary;
 import com.ingesup.java.carhibou.data.entities.Point;
 import com.ingesup.java.carhibou.models.ApiResponse;
 import com.ingesup.java.carhibou.models.Circle;
+import com.ingesup.java.carhibou.services.CommentariesService;
 import com.ingesup.java.carhibou.services.ItinerariesService;
 import com.ingesup.java.carhibou.services.PointsService;
 import com.ingesup.java.carhibou.services.UsersService;
@@ -35,6 +37,9 @@ public class ItinerariesController {
 	
 	@Autowired
 	UsersService usersService;
+	
+	@Autowired
+	CommentariesService commentariesService;
 	
 	@SuppressWarnings("unused")
 	@RequestMapping(method=RequestMethod.POST)
@@ -104,4 +109,24 @@ public class ItinerariesController {
 		return result;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/addCommentary", method=RequestMethod.POST)
+	public ApiResponse addCommentary(
+			@RequestParam("content") String content,
+			@RequestParam("itineraryId") int itineraryId
+	){
+		ApiResponse response = new ApiResponse();
+		Commentary commentary = new Commentary();
+		commentary.setContent(content);
+		commentary.setItinerary(itinerariesService.findById(itineraryId));
+		commentary = commentariesService.save(commentary);
+		
+		if ( commentary == null ) {
+			response.setError("Unable to create commentary");
+		} else {
+			response.setResult(commentary);
+		}
+		
+		return response;
+	}
 }
