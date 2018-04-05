@@ -36,6 +36,9 @@ public class Itinerary implements Serializable {
 	//bi-directional many-to-one association to Segment
 	@OneToMany(mappedBy="itinerary")
 	private List<Point> points;
+	
+	@OneToMany(mappedBy="itinerary")
+	private List<Commentary> commentaries;
 
 	public Itinerary() {
 	}
