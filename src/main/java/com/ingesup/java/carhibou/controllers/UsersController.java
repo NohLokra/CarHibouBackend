@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ingesup.java.carhibou.models.ApiResponse;
 import com.ingesup.java.carhibou.models.UserSession;
+import com.ingesup.java.carhibou.data.dto.UserRegistrationDTO;
 import com.ingesup.java.carhibou.data.entities.User;
 import com.ingesup.java.carhibou.services.UsersService;
 
@@ -45,32 +47,43 @@ public class UsersController {
 		return response;
 	}
 	
-	@RequestMapping(value="/register", method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.POST)
 	public ApiResponse register(
-		@RequestParam("username") String username,
-		@RequestParam("password") String password,
-		@RequestParam("email") String email,
-		@RequestParam("passwordConfirm") String passwordConfirm
+		@RequestBody UserRegistrationDTO registration
 	) {
 		ApiResponse response = new ApiResponse();
-		
-		if ( !password.equals(passwordConfirm) ) {
+
+		if ( !registration.getPassword().equals(registration.getConfirmPassword()) ) {
 			response.setError("Passwords don't match");
 			
 			return response;
 		}
 		
 		Pattern mailPattern = Pattern.compile("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$/", Pattern.CASE_INSENSITIVE);
-		Matcher m = mailPattern.matcher(email);
+		Matcher m = mailPattern.matcher(registration.getEmail());
 		
 		if ( !m.find() ) {
 			response.setError("Invalid Email");
+			
+			return response;
+		}
+		
+		if ( usersService.findByEmail(registration.getEmail()) != null ) {
+			response.setError("Email already in use");
+			
+			return response;
+		}
+		
+		if ( usersService.findByUsername(registration.getUsername().toLowerCase()) != null ) {
+			response.setError("Username already in use");
+			
+			return response;
 		}
 			
 		User u = new User();
-		u.setUsername(username);
-		u.setPassword(password);
-		u.setEmail(email);
+		u.setUsername(registration.getUsername().toLowerCase());
+		u.setPassword(registration.getPassword());
+		u.setEmail(registration.getEmail());
 		
 		u = usersService.create(u);
 		

@@ -28,6 +28,10 @@ public class UsersService {
 		return daoUser.findByUsername(username);
 	}
 	
+	public User findByEmail(String email) {
+		return daoUser.findByEmail(email);
+	}
+	
 	public User findById(int id) {
 		return daoUser.findById(id);
 	}
