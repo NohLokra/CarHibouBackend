@@ -17,7 +17,7 @@ public class UsersService {
 		System.out.println("Identification de " + username + " avec le mdp " + password);
 		if ( u == null ) {
 			return false;
-		} else {			
+		} else {
 			String hashedPassword = u.getPassword();
 			
 			return password.equals(hashedPassword);
@@ -42,6 +42,10 @@ public class UsersService {
 	
 	public User findByToken(String token) {
 		return daoUser.findByToken(token);
+	}
+	
+	public User save(User u) {
+		return daoUser.save(u);
 	}
 }
 

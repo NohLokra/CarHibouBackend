@@ -5,10 +5,8 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,27 +26,9 @@ public class UsersController {
 	@Autowired
 	UsersService usersService;
 	
-	@RequestMapping(value="/auth", method = RequestMethod.POST)
 	@ResponseBody
-	public ApiResponse authenticate(
-			@RequestParam("username") String username, 
-			@RequestParam("password") String password
-	) {
-		ApiResponse response = new ApiResponse();
-		
-		if ( usersService.authenticate(username, password) ) {
-			User u = usersService.findByUsername(username);
-			UserSession session = new UserSession(u);
-			response.setResult(session);
-		} else {
-			response.setError("Wrong username or password");
-		}
-		
-		return response;
-	}
-	
 	@RequestMapping(method=RequestMethod.POST)
-	public ApiResponse register(
+	public ApiResponse register( // Enregistrement d'un user, donc création
 		@RequestBody UserRegistrationDTO registration
 	) {
 		ApiResponse response = new ApiResponse();
@@ -92,15 +72,5 @@ public class UsersController {
 		
 		return response;
 	}
-	
-	@RequestMapping(value="/auth", method=RequestMethod.DELETE)
-	public ApiResponse logout(
-		@RequestHeader("Authorization") String authorization
-	) {
-		ApiResponse result = new ApiResponse();
-		
-		System.out.println(authorization);
-		
-		return result;
-	}
+
 }

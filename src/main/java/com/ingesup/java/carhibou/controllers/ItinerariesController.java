@@ -26,6 +26,7 @@ import com.ingesup.java.carhibou.services.UsersService;
 @RequestMapping(value="/itineraries")
 @CrossOrigin(origins = "*")
 public class ItinerariesController {
+
 	@Autowired
 	ItinerariesService itinerariesService;
 	
@@ -36,9 +37,9 @@ public class ItinerariesController {
 	UsersService usersService;
 	
 	@SuppressWarnings("unused")
-	@RequestMapping(value="/", method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.POST)
 	@ResponseBody
-	public ApiResponse insert(
+	public ApiResponse insert( // Création d'un itinéraire
 		@RequestBody ItineraryDTO i,
 		@RequestHeader("Authorization") String token
 	) {
@@ -73,7 +74,7 @@ public class ItinerariesController {
 	
 	@ResponseBody
 	@RequestMapping(method=RequestMethod.GET)
-	public ApiResponse getAround(
+	public ApiResponse getAround( // Recherche d'un itinéraire tant de mètres à la ronde, autour du point donné
 		@RequestParam("lat") double latitude,
 		@RequestParam("lng") double longitude,
 		@RequestParam("radius") int radius,
@@ -103,13 +104,4 @@ public class ItinerariesController {
 		return result;
 	}
 	
-	@ResponseBody
-	@RequestMapping(value="/test", method=RequestMethod.GET)
-	public ApiResponse test() {
-		ApiResponse response = new ApiResponse();
-		
-		response.setResult(itinerariesService.findAll());
-		
-		return response;
-	}
 }
