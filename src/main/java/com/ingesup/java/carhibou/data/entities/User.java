@@ -38,6 +38,17 @@ public class User implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
 	private List<Itinerary> itineraries;
+	
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+	private List<Notification> notifications;
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
 
 	public User() {
 	}
