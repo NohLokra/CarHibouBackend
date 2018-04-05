@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  */
 @Entity
-@Table(name="segments")
+@Table(name="points")
 @NamedQuery(name="Point.findAll", query="SELECT p FROM Point p")
 public class Point implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -70,6 +70,10 @@ public class Point implements Serializable {
 
 	public void setItinerary(Itinerary itinerary) {
 		this.itinerary = itinerary;
+	}
+	
+	public String toString() {
+		return String.valueOf(lat) + ":" + String.valueOf(lng);
 	}
 
 }

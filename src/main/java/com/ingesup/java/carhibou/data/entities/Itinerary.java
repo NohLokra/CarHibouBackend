@@ -34,8 +34,7 @@ public class Itinerary implements Serializable {
 	private User user;
 
 	//bi-directional many-to-one association to Segment
-	@JsonIgnore
-	@OneToMany(mappedBy="itinerary", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="itinerary")
 	private List<Point> points;
 
 	public Itinerary() {
@@ -100,7 +99,7 @@ public class Itinerary implements Serializable {
 		return this.points;
 	}
 
-	public void setSegments(List<Point> points) {
+	public void setPoints(List<Point> points) {
 		this.points = points;
 	}
 

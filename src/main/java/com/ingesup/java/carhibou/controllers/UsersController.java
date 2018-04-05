@@ -59,9 +59,9 @@ public class UsersController {
 			return response;
 		}
 		
-		Pattern mailPattern = Pattern.compile("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$/", Pattern.CASE_INSENSITIVE);
+		Pattern mailPattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 		Matcher m = mailPattern.matcher(registration.getEmail());
-		
+
 		if ( !m.find() ) {
 			response.setError("Invalid Email");
 			

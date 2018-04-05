@@ -21,5 +21,9 @@ public class ItinerariesService {
 	public Itinerary save(Itinerary entity) {
 		return daoItineraries.save(entity);
 	}
+	
+	public Itinerary findById(int id) {
+		return daoItineraries.findById(id);
+	}
 
 }

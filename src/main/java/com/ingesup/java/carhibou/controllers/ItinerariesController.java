@@ -19,6 +19,7 @@ import com.ingesup.java.carhibou.data.entities.Point;
 import com.ingesup.java.carhibou.models.ApiResponse;
 import com.ingesup.java.carhibou.models.Circle;
 import com.ingesup.java.carhibou.services.ItinerariesService;
+import com.ingesup.java.carhibou.services.PointsService;
 import com.ingesup.java.carhibou.services.UsersService;
 
 @RestController
@@ -29,17 +30,18 @@ public class ItinerariesController {
 	ItinerariesService itinerariesService;
 	
 	@Autowired
+	PointsService pointsService;
+	
+	@Autowired
 	UsersService usersService;
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@SuppressWarnings("unused")
+	@RequestMapping(value="/", method=RequestMethod.POST)
 	@ResponseBody
 	public ApiResponse insert(
 		@RequestBody ItineraryDTO i,
 		@RequestHeader("Authorization") String token
 	) {
-		
-		System.out.println(token);
-		
 		ApiResponse response = new ApiResponse();
 		
 		Itinerary itinerary = new Itinerary();
@@ -48,6 +50,17 @@ public class ItinerariesController {
 		itinerary.setStart(i.getStart());
 		
 		itinerary = itinerariesService.save(itinerary);
+		
+		List<Point> dbPoints = new ArrayList<Point>();
+		for ( Point p : i.getPath() ) {
+			p.setItinerary(itinerary);
+			
+			p = pointsService.save(p);
+			
+			dbPoints.add(p);
+		}
+		
+		itinerary.setPoints(dbPoints);
 		
 		if ( itinerary == null ) {
 			response.setError("Unable to create itinerary");
