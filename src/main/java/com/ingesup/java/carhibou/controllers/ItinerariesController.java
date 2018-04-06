@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +21,14 @@ import com.ingesup.java.carhibou.data.entities.Itinerary;
 import com.ingesup.java.carhibou.data.entities.Point;
 import com.ingesup.java.carhibou.models.ApiResponse;
 import com.ingesup.java.carhibou.models.Circle;
+import com.ingesup.java.carhibou.services.CommentariesService;
 import com.ingesup.java.carhibou.services.ItinerariesService;
 import com.ingesup.java.carhibou.services.PointsService;
 import com.ingesup.java.carhibou.services.UsersService;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/itineraries")
-@CrossOrigin(origins = "*")
 public class ItinerariesController {
 
 	@Autowired
@@ -36,12 +40,14 @@ public class ItinerariesController {
 	@Autowired
 	UsersService usersService;
 	
-	@SuppressWarnings("unused")
-	@RequestMapping(method=RequestMethod.POST)
+	@Autowired
+	CommentariesService commentariesService;
+	
+	@PostMapping
 	@ResponseBody
 	public ApiResponse insert( // Création d'un itinéraire
 		@RequestBody ItineraryDTO i,
-		@RequestHeader("Authorization") String token
+		@RequestHeader(value = "Authorization", defaultValue = "") String token
 	) {
 		ApiResponse response = new ApiResponse();
 		
@@ -63,11 +69,12 @@ public class ItinerariesController {
 		
 		itinerary.setPoints(dbPoints);
 		
-		if ( itinerary == null ) {
-			response.setError("Unable to create itinerary");
-		} else {
+		// Pour une raison que j'ignore, mon IDE me dit que ce code est mort
+//		if ( itinerary == null ) {
+//			response.setError("Unable to create itinerary");
+//		} else {
 			response.setResult(itinerary);
-		}
+//		}
 		
 		return response;
 	}
@@ -78,13 +85,13 @@ public class ItinerariesController {
 		@RequestParam("lat") double latitude,
 		@RequestParam("lng") double longitude,
 		@RequestParam("radius") int radius,
-		@RequestHeader("Authorization") String token
+		@RequestHeader(value = "Authorization", defaultValue = "") String token
 	) {
 		ApiResponse result = new ApiResponse();
 		
 		Circle circle = new Circle(latitude, longitude, radius);
 		
-		if ( token == null ) {
+		if ( token.equals("") ) {
 			result.setError("Vous devez être connectés pour accéder à cette fonctionnalité");
 		} else {
 			List<Itinerary> allItineraries = itinerariesService.findAll();
@@ -104,4 +111,18 @@ public class ItinerariesController {
 		return result;
 	}
 	
+	@ResponseBody
+	@GetMapping("/{id}")
+	public ApiResponse findOne(
+		@PathVariable("id") int id
+	) {
+		ApiResponse result = new ApiResponse();
+		
+		Itinerary i = itinerariesService.findById(id);
+		
+		result.setResult(i);
+		
+		return result;
+	}
+
 }

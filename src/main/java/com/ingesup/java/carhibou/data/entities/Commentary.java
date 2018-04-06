@@ -1,5 +1,7 @@
 package com.ingesup.java.carhibou.data.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,60 +15,54 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name="notifications")
-@NamedQuery(name="Notification.findAll", query="SELECT n FROM Notification n")
-public class Notification {
+@Table(name="commentaries")
+@NamedQuery(name="Commentary.findAll", query="SELECT c FROM Commentary c")
+public class Commentary implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
 	@Column(name="content")
 	private String content;
-	
-	@Column(name="read")
-	private String read;
-	
-	@Column(name="title")
-	private String title;
-	
-	@Column(name="href")
-	private String href;
-	
+
+	//bi-directional many-to-one association to Itinerary
 	@ManyToOne
 	@JsonIgnore
-	@JoinColumn(name="user_id")
-	private User user;
+	@JoinColumn(name="itinerary_id")
+	private Itinerary itinerary;
 
+	public Commentary() {
+	}
+	
+	public Commentary(Commentary c) {
+		this.id = c.getId();
+		this.content = c.getContent();
+	}
+	
 	public int getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	
 	public String getContent() {
-		return content;
+		return this.content;
 	}
 
 	public void setContent(String content) {
 		this.content = content;
 	}
-
-	public String getTitle() {
-		return title;
+	
+	public Itinerary getItinerary() {
+		return itinerary;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setItinerary(Itinerary itinerary) {
+		this.itinerary = itinerary;
 	}
 
-	public String getHref() {
-		return href;
-	}
-
-	public void setHref(String href) {
-		this.href = href;
-	}
 	
 }

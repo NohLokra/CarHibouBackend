@@ -18,9 +18,9 @@ import com.ingesup.java.carhibou.services.UsersService;
 
 import java.util.regex.Matcher;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/users")
-@CrossOrigin(origins = "*")
 public class UsersController {
 	
 	@Autowired

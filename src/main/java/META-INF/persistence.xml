@@ -5,6 +5,7 @@
 		<class>com.ingesup.java.carhibou.data.entities.Point</class>
 		<class>com.ingesup.java.carhibou.data.entities.User</class>
 		<class>com.ingesup.java.carhibou.data.entities.Notification</class>
+		<class>com.ingesup.java.carhibou.data.entities.Commentary</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/carhibou"/>
 			<property name="javax.persistence.jdbc.user" value="root"/>

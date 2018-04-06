@@ -3,8 +3,6 @@ package com.ingesup.java.carhibou.data.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 
@@ -36,6 +34,9 @@ public class Itinerary implements Serializable {
 	//bi-directional many-to-one association to Segment
 	@OneToMany(mappedBy="itinerary")
 	private List<Point> points;
+	
+	@OneToMany(mappedBy="itinerary")
+	private List<Commentary> commentaries;
 
 	public Itinerary() {
 	}

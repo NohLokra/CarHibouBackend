@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value="/error")
-@CrossOrigin(origins = "*")
-public class ErrorsController {
+@CrossOrigin("*")
+public class ErrorController {
 	@RequestMapping(method=RequestMethod.GET)
 	public Object index(Object test) {
+		System.out.println(test);
 		return test;
 	}
 }

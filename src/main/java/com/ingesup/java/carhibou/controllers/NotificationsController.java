@@ -11,21 +11,23 @@ import com.ingesup.java.carhibou.data.entities.User;
 import com.ingesup.java.carhibou.models.ApiResponse;
 import com.ingesup.java.carhibou.services.UsersService;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/notifications")
-@CrossOrigin(origins = "*")
 public class NotificationsController {
 	@Autowired
 	private UsersService usersService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ApiResponse getForUser(
-		@RequestHeader("Authorization") String token
+		@RequestHeader(value="Authorization", defaultValue="") String token
 	) {
+		
+		System.out.println(token);
 		ApiResponse result = new ApiResponse();
 		
-		if ( token == null ) {
-			result.setError("Vous devez être connecté pour ccéder à cette fonctionnalité");
+		if ( token.equals("") ) {
+			result.setError("Vous devez être connecté pour accéder à cette fonctionnalité");
 			
 			return result;
 		}
