@@ -99,7 +99,7 @@ public class ItinerariesController {
 			
 			for ( Itinerary i : allItineraries ) {
 				for ( Point point : i.getPoints() ) {
-					if ( circle.hasPoint(point) ) {
+					if ( circle.hasPoint(point) && !resultItineraries.contains(i)) {
 						resultItineraries.add(i);
 					}
 				}
